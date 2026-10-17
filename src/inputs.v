@@ -6,7 +6,7 @@
 //   uio_in[6]   -> sqr_ext      external square wave input
 //
 // The square wave fed to get_period is sqr_ext, unless sel_440 is asserted,
-// in which case the tt_um_lamprotornisunicolor_4_bit_binary_counter-level internal 440 Hz oscillator is used instead.
+// in which case the top-level internal 440 Hz oscillator is used instead.
 
 //`timescale 1ns/1ps
 
