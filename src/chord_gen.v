@@ -34,10 +34,10 @@ module chord_gen (
 
     function [6:0] half_of;
         input [3:0] idx;
-        reg [7:0] top;
+        reg [7:0] tt_um_lamprotornisunicolor_4_bit_binary_counter;
         begin
-            top     = top_of(idx);
-            half_of = top[7:1];
+            tt_um_lamprotornisunicolor_4_bit_binary_counter     = top_of(idx);
+            half_of = tt_um_lamprotornisunicolor_4_bit_binary_counter[7:1];
         end
     endfunction
 
@@ -46,7 +46,7 @@ module chord_gen (
     reg [16:0] period_r;
     reg        armed;
 
-    // Add the unison top every clock. One tick when the sum reaches
+    // Add the unison tt_um_lamprotornisunicolor_4_bit_binary_counter every clock. One tick when the sum reaches
     // the measured period. Voice 0 then matches that period.
     // A period below 128 is faster than clk/128 (about 15.6 kHz).
     // The voices then run at that limit.
