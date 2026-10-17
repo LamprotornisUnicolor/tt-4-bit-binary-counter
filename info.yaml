@@ -3,9 +3,9 @@ project:
   title:        "4-bit Binary Counter"      # Project title
   author:       "Ingus"      # Your name
   discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "The chip synthesizes chords on top of the base signal, all the semitones available"      # One line description of what your project does
+  description:  "Rebuilds a 20 Hz to 15 kHz square wave as a 13-semitone chord and a PWM audio output. Clock is 2 MHz."      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
-  clock_hz:     10000000       # Clock frequency in Hz (or 0 if not applicable)
+  clock_hz:     2000000        # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
@@ -29,8 +29,8 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "in440"
-  ui[1]: "main_tone"
+  ui[0]: "sel440"
+  ui[1]: "tone0"
   ui[2]: "semi1"
   ui[3]: "semi2"
   ui[4]: "semi3"
@@ -39,23 +39,23 @@ pinout:
   ui[7]: "semi6"
 
   # Outputs
-  uo[0]: "semi7"
-  uo[1]: "semi8"
-  uo[2]: "semi9"
-  uo[3]: "semi10"
-  uo[4]: "semi11"
-  uo[5]: "semi12"
+  uo[0]: "sqr_out"
+  uo[1]: ""
+  uo[2]: ""
+  uo[3]: ""
+  uo[4]: ""
+  uo[5]: ""
   uo[6]: ""
-  uo[7]: ""
+  uo[7]: "pwm"
 
   # Bidirectional pins
-  uio[0]: "out1"
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
+  uio[0]: "semi7"
+  uio[1]: "semi8"
+  uio[2]: "semi9"
+  uio[3]: "semi10"
+  uio[4]: "semi11"
+  uio[5]: "semi12"
+  uio[6]: "sqr_in"
   uio[7]: ""
 
 # Do not change!

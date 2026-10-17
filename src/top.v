@@ -1,17 +1,20 @@
 // Top level for the chord / PWM audio generator.
 //
 // Signal path:
-//   inputs  -> sqr (external or internal 440 Hz) -> get_period -> period
-//   chord   -> chord_gen (clocked with clk, period = recovered period)
+//   inputs  -> sqr (external or internal 440 Hz) -> get_period
+//   chord   -> chord_gen (fixed tops, one clock divider)
 //           -> chord_size + value -> pwm_generator -> pwm_out
+//
+// The clock is 2 MHz. Output tones are 20 Hz to about 15 kHz.
 //
 // Pin map:
 //   ui_in[0]    sel_440    force 440 Hz reference
 //   ui_in[7:1]  chord[6:0]
 //   uio_in[5:0] chord[12:6]
 //   uio_in[6]   sqr_ext    external square wave
-//   uo_out[0]   pwm_out    audio output
-//   uio_out[7]  sqr        square-wave monitor (pin 7 driven as output)
+//   uo_out[7]   pwm_out    audio to the Tiny Tapeout Audio Pmod (out[7])
+//   uo_out[0]   sqr        square-wave monitor
+//   uio_oe      0          every bidirectional pin is an input
 
 //`timescale 1ns/1ps
 
@@ -39,22 +42,22 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
         .chord  (chord)
     );
 
-    // ---- Internal 440 Hz reference: 10 MHz / (2 * 440) = 11364 clocks ------
-    localparam [16:0] HALF_440 = 17'd11364;
-    reg [16:0] cnt440;
+    // 2 MHz / (2 * 440) = 2272.7 clocks. 2273 gives 439.95 Hz.
+    localparam [11:0] HALF_440 = 12'd2273;
+    reg [11:0] cnt440;
     reg        sqr_440;
 
     always @(posedge clk) begin
         if (!rst_n) begin
-            cnt440  <= 17'd0;
+            cnt440  <= 12'd0;
             sqr_440 <= 1'b0;
         end
-        else if (cnt440 == HALF_440 - 17'd1) begin
-            cnt440  <= 17'd0;
+        else if (cnt440 == HALF_440 - 12'd1) begin
+            cnt440  <= 12'd0;
             sqr_440 <= ~sqr_440;
         end
         else begin
-            cnt440 <= cnt440 + 17'd1;
+            cnt440 <= cnt440 + 12'd1;
         end
     end
 
@@ -63,7 +66,7 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
     // ---- Recover the period of the square wave -----------------------------
     wire        period_valid;
     wire        period_idle;
-    wire [19:0] period;
+    wire [16:0] period_len;
 
     get_period u_get_period (
         .clk    (clk),
@@ -71,7 +74,7 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
         .sqr_in (sqr_in),
         .valid  (period_valid),
         .idle   (period_idle),
-        .period (period)
+        .period (period_len)
     );
 
     // ---- Expand the measured period into a chord ---------------------------
@@ -83,7 +86,7 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
         .rst          (~rst_n),        // chord_gen reset is active-high
         .chord        (chord),
         .chord_update (period_valid),
-        .period       (period),
+        .period       (period_len),
         .chord_size   (chord_size),
         .value        (chord_value)
     );
@@ -100,9 +103,10 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
         .output_pwm   (pwm_out)
     );
 
-    // ---- Output pins -------------------------------------------------------
-    assign uo_out  = { 7'b0, pwm_out };   // audio on uo_out[0]
-    assign uio_out = { sqr_in, 7'b0 };    // square-wave monitor on pin 7
-    assign uio_oe  = 8'b1000_0000;        // pin 7 = output, pins 0..6 = inputs
+    // Audio Pmod reads PWM from out[7]. out[6:1] stay low.
+    // The square monitor is on out[0]. All bidirectional pins are inputs.
+    assign uo_out  = { pwm_out, 6'b0, sqr_in };
+    assign uio_out = 8'b0;
+    assign uio_oe  = 8'b0;
 
 endmodule
