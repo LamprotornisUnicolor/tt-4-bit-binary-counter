@@ -29,7 +29,7 @@ module pwm_generator (
         end
         else begin
             if (chord_update) begin
-                clkdiv  <= 14 - chord_size;
+                clkdiv  <= 4'd14 - chord_size;
                 counter <= 4'd0;
             end
 

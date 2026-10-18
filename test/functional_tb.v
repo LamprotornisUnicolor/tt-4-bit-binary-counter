@@ -30,7 +30,7 @@ module functional_tb;
     wire [7:0] uio_out;
     wire [7:0] uio_oe;
 
-    tt_um_lamprotornisunicolor_4_bit_binary_counter dut (
+    tt_um_chord_synth_lamprotornisunicolor dut (
         .ui_in  (ui_in),
         .uo_out (uo_out),
         .uio_in (uio_in),

@@ -18,7 +18,7 @@
 
 //`timescale 1ns/1ps
 
-module tt_um_lamprotornisunicolor_4_bit_binary_counter (
+module tt_um_chord_synth_lamprotornisunicolor (
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
     input  wire [7:0] uio_in,
@@ -105,8 +105,11 @@ module tt_um_lamprotornisunicolor_4_bit_binary_counter (
 
     // Audio Pmod reads PWM from out[7]. out[6:1] stay low.
     // The square monitor is on out[0]. All bidirectional pins are inputs.
+    // ena is a required port. period_idle is a status flag. uio_in[7] has
+    // no pin function. Read them so they are not unused nets.
+    wire _unused = &{ena, period_idle, uio_in[7], 1'b0};
     assign uo_out  = { pwm_out, 6'b0, sqr_in };
     assign uio_out = 8'b0;
-    assign uio_oe  = 8'b0;
+    assign uio_oe  = {7'b0, _unused & 1'b0};
 
 endmodule

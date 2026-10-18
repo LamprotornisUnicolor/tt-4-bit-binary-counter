@@ -6,7 +6,7 @@
 //   uio_in[6]   -> sqr_ext      external square wave input
 //
 // The square wave fed to get_period is sqr_ext, unless sel_440 is asserted,
-// in which case the tt_um_lamprotornisunicolor_4_bit_binary_counter-level internal 440 Hz oscillator is used instead.
+// in which case the top-level internal 440 Hz oscillator is used instead.
 
 //`timescale 1ns/1ps
 
@@ -19,7 +19,8 @@ module inputs (
 );
 
     assign sel_440 = ui_in[0];
-    assign sqr_ext = uio_in[6];
+    // Pin 7 has no function. The AND with 0 keeps sqr_ext equal to pin 6.
+    assign sqr_ext = uio_in[6] | (uio_in[7] & 1'b0);
     assign chord   = { uio_in[5:0], ui_in[7:1] };
 
 endmodule
